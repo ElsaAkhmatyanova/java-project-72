@@ -11,7 +11,7 @@ public class App {
     }
 
     private static int getPort() {
-        String port = System.getenv().getOrDefault("PORT", "7070");
+        String port = System.getenv().getOrDefault("PORT", "8080");
         return Integer.parseInt(port);
     }
 
