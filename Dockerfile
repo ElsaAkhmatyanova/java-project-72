@@ -8,4 +8,4 @@ RUN ["./gradlew", "clean", "build"]
 
 EXPOSE 8080
 
-CMD ["./gradlew", "run"]
+CMD ["java", "-jar", "build/libs/app-1.0-SNAPSHOT-all.jar"]
