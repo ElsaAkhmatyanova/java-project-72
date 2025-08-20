@@ -54,7 +54,15 @@ tasks.test {
     finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.jacocoTestReport { reports { xml.required.set(true) } }
+tasks.shadowJar {
+    mergeServiceFiles()
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+    }
+}
 
 sonar {
     properties {
