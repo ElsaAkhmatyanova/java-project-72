@@ -1,12 +1,14 @@
 package hexlet.code;
 
-import hexlet.code.config.DataBaseInitializer;
+import hexlet.code.util.DataBaseInitializer;
+import hexlet.code.config.JteEngineProvider;
 import hexlet.code.repository.UrlsRepository;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Locale;
+import java.util.Map;
 
 @Slf4j
 public class App {
@@ -30,9 +32,11 @@ public class App {
     public static Javalin getApp() {
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
-            config.fileRenderer(new JavalinJte());
+            config.fileRenderer(new JavalinJte(JteEngineProvider.createTemplateEngine()));
         });
-        app.get("/", ctx -> ctx.result("Hello World"));
+        app.get("/", ctx -> {
+            ctx.render("index.jte", Map.of("name", "Elza"));
+        });
         app.get("/url/list", ctx -> ctx.result(UrlsRepository.findAll().toString()));
         return app;
     }

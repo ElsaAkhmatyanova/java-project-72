@@ -1,5 +1,6 @@
-package hexlet.code.config;
+package hexlet.code.util;
 
+import hexlet.code.config.DataSourceProvider;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

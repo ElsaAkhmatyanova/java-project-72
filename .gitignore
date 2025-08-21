@@ -46,3 +46,6 @@ bin/
 
 ### Test files ###
 app/test_files
+
+### JTE Classes ###
+app/jte-classes
