@@ -44,6 +44,10 @@ public class UrlsRepository {
     }
 
     public static Optional<Urls> findById(Long id) throws SQLException {
+        if (id == null) {
+            throw new NullPointerException("Id must be not null!");
+        }
+
         String sql = "SELECT id, name, created_at FROM urls WHERE id = ?";
 
         try (Connection conn = DataSourceProvider.getDataSource().getConnection();
@@ -80,5 +84,21 @@ public class UrlsRepository {
             }
         }
         return urls;
+    }
+
+    public static boolean isExistByName(String name) throws SQLException, NullPointerException {
+        if (name == null) {
+            throw new NullPointerException("Name must be not null!");
+        }
+
+        String sql = "SELECT 1 FROM urls WHERE name = ? LIMIT 1";
+
+        try (Connection conn = DataSourceProvider.getDataSource().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next(); // true if at least one row exists
+            }
+        }
     }
 }
