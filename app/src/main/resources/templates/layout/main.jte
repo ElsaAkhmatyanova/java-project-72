@@ -1,8 +1,10 @@
 @import gg.jte.Content
 @import hexlet.code.util.NamedRoutes
+@import hexlet.code.dto.BasePage
 
 @param Content content
 @param String title
+@param BasePage page = null
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -39,6 +41,14 @@
 </nav>
 
 <main class="flex-grow-1">
+    @if(page != null && page.getFlashMessage() != null)
+        <div class="alert alert-${page.getFlashMessage().getType().getBootstrapClass()} alert-dismissible fade show"
+             role="alert">
+            ${page.getFlashMessage().getMessage()}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     ${content}
 </main>
 

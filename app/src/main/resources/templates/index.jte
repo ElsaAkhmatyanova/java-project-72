@@ -1,7 +1,11 @@
+@import hexlet.code.dto.MainPage
 @import hexlet.code.util.NamedRoutes
+
+@param MainPage page
 
 @template.layout.main(
 title = "Анализатор страниц",
+page = page,
 content = @`
     <section class="py-5 text-center">
         <div class="container">
