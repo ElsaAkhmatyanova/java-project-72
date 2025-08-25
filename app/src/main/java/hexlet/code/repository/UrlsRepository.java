@@ -97,7 +97,7 @@ public class UrlsRepository {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, name);
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next(); // true if at least one row exists
+                return rs.next();
             }
         }
     }

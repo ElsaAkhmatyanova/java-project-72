@@ -37,6 +37,10 @@ dependencies {
     implementation("io.javalin:javalin-bundle:6.6.0")
     implementation("io.javalin:javalin-rendering:6.6.0")
 
+    implementation("com.konghq:unirest-java:3.13.0")
+
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+
     testImplementation("org.assertj:assertj-core:3.27.3")
     testImplementation(platform("org.junit:junit-bom:5.12.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
