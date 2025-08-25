@@ -21,7 +21,7 @@ public class UrlUtil {
                 baseUrl.append(":").append(url.getPort());
             }
             return baseUrl.toString();
-        } catch (URISyntaxException | MalformedURLException e) {
+        } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
             throw new UrlParsingException(e.getMessage(), e);
         }
     }

@@ -74,7 +74,7 @@ public class UrlsController {
             Long urlsId = ctx.pathParamAsClass("id", Long.class).get();
             log.info("Get urls by id: {}", urlsId);
             Urls urls = UrlsRepository.findById(urlsId)
-                    .orElseThrow(() -> new NotFoundResponse("Urls entity with id " + urlsId + " not found!"));
+                    .orElseThrow(() -> new NotFoundResponse("Urls entity with id=" + urlsId + " not found!"));
             UrlPage page = new UrlPage(UrlsMapper.mapToRecord(urls));
             ctx.render("page/url.jte", model("page", page));
         } catch (NotFoundResponse e) {

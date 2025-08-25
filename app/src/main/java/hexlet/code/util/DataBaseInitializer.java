@@ -27,7 +27,7 @@ public class DataBaseInitializer {
     }
 
     public static void initializeSchema() throws SQLException, IOException {
-        log.info("Initialize schema schema");
+        log.info("Initialize schema");
         runSqlScript(Path.of("src/main/resources/schema.sql"));
     }
 }
