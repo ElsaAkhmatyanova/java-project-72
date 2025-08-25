@@ -5,6 +5,7 @@ import hexlet.code.dto.FlashMessage;
 import hexlet.code.dto.UrlPage;
 import hexlet.code.dto.UrlRecord;
 import hexlet.code.exception.EntityAlreadyExistException;
+import hexlet.code.exception.NotFoundException;
 import hexlet.code.exception.UrlParsingException;
 import hexlet.code.mapper.UrlsMapper;
 import hexlet.code.model.Urls;
@@ -72,6 +73,22 @@ public class UrlsController {
             ctx.sessionAttribute("flash", flashMessage);
         } finally {
             ctx.redirect("/");
+        }
+    }
+
+    public static void findById(Context ctx) {
+        String result = "";
+        try {
+            Long urlsId = ctx.pathParamAsClass("id", Long.class).get();
+            log.info("Get urls by id: {}", urlsId);
+            Urls urls = UrlsRepository.findById(urlsId)
+                    .orElseThrow(() -> new NotFoundException("Urls entity with id " + urlsId + " not found!"));
+            result = urls.toString();
+        } catch (Exception e) {
+            log.error("Exception while retrieving urls entity by id");
+            result = e.getMessage();
+        } finally {
+            ctx.result(result);
         }
     }
 }
