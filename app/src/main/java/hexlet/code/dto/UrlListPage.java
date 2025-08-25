@@ -3,8 +3,10 @@ package hexlet.code.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
-public class UrlPage {
-    private UrlRecord urlRecord;
+public class UrlListPage {
+    private List<UrlRecord> urlRecords;
 }

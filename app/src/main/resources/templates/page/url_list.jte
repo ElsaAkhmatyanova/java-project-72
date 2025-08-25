@@ -1,6 +1,7 @@
-@import hexlet.code.dto.UrlPage
+@import hexlet.code.dto.UrlListPage
+@import hexlet.code.util.NamedRoutes
 
-@param UrlPage page
+@param UrlListPage page
 
 @template.layout.main(
 title = "Сайты",
@@ -22,7 +23,7 @@ content = @`
                     @for(var url : page.getUrlRecords())
                         <tr>
                             <td>${url.id()}</td>
-                            <td>${url.name()}</td>
+                            <td><a href="${NamedRoutes.urlsPath(url.id())}">${url.name()}</a></td>
                             <td>${url.lastCheck().toString()}</td>
                             <td>${url.code()}</td>
                         </tr>
