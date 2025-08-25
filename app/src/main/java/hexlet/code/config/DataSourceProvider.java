@@ -25,6 +25,6 @@ public class DataSourceProvider {
 
     public static String getDbUrl() {
         return System.getenv().getOrDefault("JDBC_DATABASE_URL",
-                "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;USER=sa;PASSWORD=sa");
+                "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;");
     }
 }
