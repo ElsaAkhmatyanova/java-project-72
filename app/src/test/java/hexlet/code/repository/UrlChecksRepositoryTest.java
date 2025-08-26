@@ -91,7 +91,7 @@ class UrlChecksRepositoryTest {
         List<UrlChecks> result = UrlChecksRepository.findAllLatest();
         assertThat(result)
                 .hasSize(2)
-                .anySatisfy(urlChecks -> assertEquals(check1.getTitle(), urlChecks.getTitle()))
-                .anySatisfy(urlChecks -> assertEquals(check3.getTitle(), urlChecks.getTitle()));
+                .anySatisfy(urlChecks -> assertEquals(check2.getTitle(), urlChecks.getTitle()))
+                .anySatisfy(urlChecks -> assertEquals(check4.getTitle(), urlChecks.getTitle()));
     }
 }

@@ -87,7 +87,7 @@ public class UrlChecksRepository {
                 + "    WHERE uc2.url_id = uc.url_id "
                 + ") "
                 + "AND uc.id = ( "
-                + "    SELECT MIN(uc3.id) "
+                + "    SELECT MAX(uc3.id) "
                 + "    FROM url_checks uc3 "
                 + "    WHERE uc3.url_id = uc.url_id "
                 + "      AND uc3.created_at = uc.created_at "
