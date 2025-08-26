@@ -8,5 +8,5 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class UrlListPage {
-    private List<UrlRecord> urlRecords;
+    private List<UrlsWithCheckDto> urlsWithCheckDtoList;
 }

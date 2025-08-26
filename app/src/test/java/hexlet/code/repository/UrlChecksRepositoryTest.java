@@ -8,11 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UrlChecksRepositoryTest {
 
@@ -51,11 +49,11 @@ class UrlChecksRepositoryTest {
     }
 
     @Test
-    void testFindLastByUrlIdSuccess() throws Exception {
-        var urls = new Urls("https://example1.com");
-        UrlsRepository.save(urls);
+    void testFindAllLatestSuccess() throws Exception {
+        var urls1 = new Urls("https://example1.com");
+        UrlsRepository.save(urls1);
         var check1 = new UrlChecks(
-                urls.getId(),
+                urls1.getId(),
                 200,
                 "Example Title 1",
                 "Example H1 1",
@@ -63,7 +61,7 @@ class UrlChecksRepositoryTest {
         );
         UrlChecksRepository.save(check1);
         var check2 = new UrlChecks(
-                urls.getId(),
+                urls1.getId(),
                 404,
                 "Example Title 2",
                 "Example H1 2",
@@ -71,16 +69,29 @@ class UrlChecksRepositoryTest {
         );
         UrlChecksRepository.save(check2);
 
-        Optional<UrlChecks> result = UrlChecksRepository.findLastByUrlId(urls.getId());
+        var urls2 = new Urls("https://example2.com");
+        UrlsRepository.save(urls2);
+        var check3 = new UrlChecks(
+                urls2.getId(),
+                201,
+                "Example Title 3",
+                "Example H1 3",
+                "Some description 3"
+        );
+        UrlChecksRepository.save(check3);
+        var check4 = new UrlChecks(
+                urls2.getId(),
+                400,
+                "Example Title 4",
+                "Example H1 4",
+                "Some description 4"
+        );
+        UrlChecksRepository.save(check4);
 
-        assertTrue(result.isPresent());
-        assertEquals("Example Title 2", result.get().getTitle());
-        assertEquals(404, result.get().getStatusCode());
-    }
-
-    @Test
-    void testFindLastByUrlIdEmpty() throws Exception {
-        Optional<UrlChecks> result = UrlChecksRepository.findLastByUrlId(1L);
-        assertTrue(result.isEmpty());
+        List<UrlChecks> result = UrlChecksRepository.findAllLatest();
+        assertThat(result)
+                .hasSize(2)
+                .anySatisfy(urlChecks -> assertEquals(check1.getTitle(), urlChecks.getTitle()))
+                .anySatisfy(urlChecks -> assertEquals(check3.getTitle(), urlChecks.getTitle()));
     }
 }

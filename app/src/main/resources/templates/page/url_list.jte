@@ -20,11 +20,11 @@ content = @`
                     </tr>
                     </thead>
                     <tbody>
-                    @for(var url : page.getUrlRecords())
+                    @for(var url : page.getUrlsWithCheckDtoList())
                         <tr>
                             <td>${url.id()}</td>
                             <td><a href="${NamedRoutes.urlsPath(url.id())}">${url.name()}</a></td>
-                            <td>${url.lastCheck().toString()}</td>
+                            <td>${url.lastCheck()}</td>
                             <td>${url.code()}</td>
                         </tr>
                     @endfor

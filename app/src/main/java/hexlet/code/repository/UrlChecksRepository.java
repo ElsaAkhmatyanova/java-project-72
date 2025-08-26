@@ -10,14 +10,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class UrlChecksRepository {
 
     public static UrlChecks save(UrlChecks urlChecks) throws SQLException {
-        String sql = "INSERT INTO url_checks " +
-                "(url_id, status_code, title, h1, description) " +
-                "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO url_checks "
+                + "(url_id, status_code, title, h1, description) "
+                + "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DataSourceProvider.getDataSource().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -47,46 +46,15 @@ public class UrlChecksRepository {
         return urlChecks;
     }
 
-    public static Optional<UrlChecks> findById(Long id) throws SQLException, NullPointerException {
-        if (id == null) {
-            throw new NullPointerException("Id must be not null!");
-        }
-
-        String sql = "SELECT " +
-                "id, url_id, status_code, title, h1, description, created_at FROM url_checks " +
-                "WHERE id = ?";
-
-        try (Connection conn = DataSourceProvider.getDataSource().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    UrlChecks urls = new UrlChecks(
-                            rs.getLong("id"),
-                            rs.getLong("url_id"),
-                            rs.getInt("status_code"),
-                            rs.getString("title"),
-                            rs.getString("h1"),
-                            rs.getString("description"),
-                            rs.getTimestamp("created_at").toLocalDateTime()
-                    );
-                    return Optional.of(urls);
-                } else {
-                    return Optional.empty();
-                }
-            }
-        }
-    }
-
     public static List<UrlChecks> findAllByUrlId(Long id) throws SQLException, NullPointerException {
         if (id == null) {
             throw new NullPointerException("Id must be not null!");
         }
 
-        String sql = "SELECT " +
-                "id, url_id, status_code, title, h1, description, created_at " +
-                "FROM url_checks " +
-                "WHERE url_id = ?";
+        String sql = "SELECT "
+                + "id, url_id, status_code, title, h1, description, created_at "
+                + "FROM url_checks "
+                + "WHERE url_id = ?";
 
         List<UrlChecks> urlChecks = new ArrayList<>();
         try (Connection conn = DataSourceProvider.getDataSource().getConnection();
@@ -109,37 +77,38 @@ public class UrlChecksRepository {
         return urlChecks;
     }
 
-    public static Optional<UrlChecks> findLastByUrlId(Long id) throws SQLException, NullPointerException {
-        if (id == null) {
-            throw new NullPointerException("Id must be not null!");
-        }
+    public static List<UrlChecks> findAllLatest() throws SQLException {
+        String sql = "SELECT "
+                + "uc.id, uc.url_id, uc.status_code, uc.title, uc.h1, uc.description, uc.created_at "
+                + "FROM url_checks uc "
+                + "WHERE uc.created_at = ( "
+                + "    SELECT MAX(uc2.created_at) "
+                + "    FROM url_checks uc2 "
+                + "    WHERE uc2.url_id = uc.url_id "
+                + ") "
+                + "AND uc.id = ( "
+                + "    SELECT MIN(uc3.id) "
+                + "    FROM url_checks uc3 "
+                + "    WHERE uc3.url_id = uc.url_id "
+                + "      AND uc3.created_at = uc.created_at "
+                + ");";
 
-        String sql = "SELECT " +
-                "id, url_id, status_code, title, h1, description, created_at " +
-                "FROM url_checks " +
-                "WHERE url_id = ? " +
-                "ORDER BY created_at DESC, id DESC " +
-                "LIMIT 1";
-
+        List<UrlChecks> urls = new ArrayList<>();
         try (Connection conn = DataSourceProvider.getDataSource().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    UrlChecks urlChecks = new UrlChecks(
-                            rs.getLong("id"),
-                            rs.getLong("url_id"),
-                            rs.getInt("status_code"),
-                            rs.getString("title"),
-                            rs.getString("h1"),
-                            rs.getString("description"),
-                            rs.getTimestamp("created_at").toLocalDateTime()
-                    );
-                    return Optional.of(urlChecks);
-                } else {
-                    return Optional.empty();
-                }
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                urls.add(new UrlChecks(
+                        rs.getLong("id"),
+                        rs.getLong("url_id"),
+                        rs.getInt("status_code"),
+                        rs.getString("title"),
+                        rs.getString("h1"),
+                        rs.getString("description"),
+                        rs.getTimestamp("created_at").toLocalDateTime()
+                ));
             }
         }
+        return urls;
     }
 }

@@ -2,6 +2,7 @@ package hexlet.code;
 
 import hexlet.code.config.JteEngineProvider;
 import hexlet.code.controller.MainController;
+import hexlet.code.controller.UrlChecksController;
 import hexlet.code.controller.UrlsController;
 import hexlet.code.util.DataBaseInitializer;
 import hexlet.code.util.NamedRoutes;
@@ -39,6 +40,7 @@ public class App {
         app.get(NamedRoutes.urlsPath(), UrlsController::index);
         app.post(NamedRoutes.urlsPath(), UrlsController::create);
         app.get(NamedRoutes.urlsPath("{id}"), UrlsController::findById);
+        app.post(NamedRoutes.urlChecksPath("{id}"), UrlChecksController::create);
         return app;
     }
 }

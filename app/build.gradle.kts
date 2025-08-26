@@ -37,7 +37,8 @@ dependencies {
     implementation("io.javalin:javalin-bundle:6.6.0")
     implementation("io.javalin:javalin-rendering:6.6.0")
 
-    implementation("com.konghq:unirest-java:3.13.0")
+    implementation("com.konghq:unirest-java:3.14.5")
+    implementation("org.jsoup:jsoup:1.21.1")
 
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 
