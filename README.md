@@ -7,3 +7,13 @@
 
 # Page Analyzer
 Page Analyzer – сайт, который анализирует указанные страницы на SEO пригодность. Работает на базе фреймворка Javalin и на взаимодействии с базой данных через JDBC
+
+Пример работающего сайта: https://java-project-72-o0sy.onrender.com
+
+## Скриншоты
+Главная страница
+![main page](images/main.png)
+Вкладка "Сайты"
+![img_1.png](images/url_list.png)
+Вкладка с выбранным сайтом
+![img_1.png](images/url_page.png)
