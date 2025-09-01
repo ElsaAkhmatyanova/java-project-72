@@ -5,6 +5,7 @@ import hexlet.code.dto.UrlInfoDto;
 import hexlet.code.dto.UrlsWithCheckDto;
 import hexlet.code.model.UrlChecks;
 import hexlet.code.model.Urls;
+import hexlet.code.repository.projection.UrlsWithCheckProjection;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -44,31 +45,32 @@ class UrlsMapperTest {
 
     @Test
     void testMapToUrlsWithCheckDtoWithCheck() {
-        Urls urls = new Urls();
-        urls.setId(3L);
-        urls.setName("https://check.com");
-
-        UrlChecks check = new UrlChecks();
-        check.setCreatedAt(LocalDateTime.of(2025, 1, 1, 10, 0));
-        check.setStatusCode(200);
-
-        UrlsWithCheckDto dto = UrlsMapper.mapToDto(urls, check);
-
+        UrlsWithCheckProjection urlsWithCheckProjection = new UrlsWithCheckProjection(
+                3L,
+                "https://check.com",
+                LocalDateTime.of(2025, 1, 1, 10, 0),
+                200
+        );
+        UrlsWithCheckDto dto = UrlsMapper.mapToDto(urlsWithCheckProjection);
         assertThat(dto.id()).isEqualTo(3L);
         assertThat(dto.name()).isEqualTo("https://check.com");
-        assertThat(dto.lastCheck()).isEqualTo(FORMATTER.format(check.getCreatedAt()));
+        assertThat(dto.lastCheck()).isEqualTo(FORMATTER.format(urlsWithCheckProjection.lastCheck()));
         assertThat(dto.code()).isEqualTo(200);
     }
 
     @Test
     void testMapToUrlsWithCheckDtoWithoutCheck() {
-        Urls urls = new Urls();
-        urls.setId(4L);
-        urls.setName("https://no-check.com");
+        UrlsWithCheckProjection urlsWithCheckProjection = new UrlsWithCheckProjection(
+                4L,
+                "https://check.com",
+                null,
+                null
+        );
 
-        UrlsWithCheckDto dto = UrlsMapper.mapToDto(urls, null);
+        UrlsWithCheckDto dto = UrlsMapper.mapToDto(urlsWithCheckProjection);
 
         assertThat(dto.id()).isEqualTo(4L);
+        assertThat(dto.name()).isEqualTo("https://check.com");
         assertThat(dto.lastCheck()).isNull();
         assertThat(dto.code()).isNull();
     }

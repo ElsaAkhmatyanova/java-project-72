@@ -2,6 +2,7 @@ package hexlet.code.repository;
 
 import hexlet.code.model.UrlChecks;
 import hexlet.code.model.Urls;
+import hexlet.code.repository.projection.UrlsWithCheckProjection;
 import hexlet.code.util.DataBaseInitializer;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,10 +89,10 @@ class UrlChecksRepositoryTest {
         );
         UrlChecksRepository.save(check4);
 
-        List<UrlChecks> result = UrlChecksRepository.findAllLatest();
+        List<UrlsWithCheckProjection> result = UrlsRepository.findAllWithLatestCheck();
         assertThat(result)
                 .hasSize(2)
-                .anySatisfy(urlChecks -> assertEquals(check2.getTitle(), urlChecks.getTitle()))
-                .anySatisfy(urlChecks -> assertEquals(check4.getTitle(), urlChecks.getTitle()));
+                .anySatisfy(urlChecks -> assertEquals(check2.getStatusCode(), urlChecks.checkCode()))
+                .anySatisfy(urlChecks -> assertEquals(check4.getStatusCode(), urlChecks.checkCode()));
     }
 }

@@ -211,7 +211,7 @@ class AppTest {
                 var response = client.post("/urls/" + urls.getId() + "/checks");
                 assertThat(response.code()).isEqualTo(200);
 
-                var savedChecks = UrlChecksRepository.findAllLatest();
+                var savedChecks = UrlChecksRepository.findAllByUrlId(urls.getId());
                 assertThat(savedChecks).hasSize(1)
                         .first()
                         .satisfies(urlChecks -> assertEquals("Mock Page", urlChecks.getTitle()))
@@ -233,7 +233,7 @@ class AppTest {
         public void testCreateUrlCheckNotFound() {
             JavalinTest.test(app, (server, client) -> {
                 var response = client.post("/urls/1/checks");
-                var savedChecks = UrlChecksRepository.findAllLatest();
+                var savedChecks = UrlChecksRepository.findAllByUrlId(1L);
                 assertThat(savedChecks).isEmpty();
             });
         }

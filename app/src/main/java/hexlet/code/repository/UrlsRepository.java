@@ -2,6 +2,7 @@ package hexlet.code.repository;
 
 import hexlet.code.config.DataSourceProvider;
 import hexlet.code.model.Urls;
+import hexlet.code.repository.projection.UrlsWithCheckProjection;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -100,5 +101,41 @@ public class UrlsRepository {
                 return rs.next();
             }
         }
+    }
+
+    public static List<UrlsWithCheckProjection> findAllWithLatestCheck() throws SQLException {
+        String sql = """
+                SELECT u.id AS url_id,
+                       u.name AS url_name,
+                       uc.created_at AS check_created_at,
+                       uc.status_code AS check_status_code
+                FROM urls u
+                LEFT JOIN url_checks uc
+                    ON uc.id = (
+                        SELECT uc2.id
+                        FROM url_checks uc2
+                        WHERE uc2.url_id = u.id
+                        ORDER BY uc2.created_at DESC, uc2.id DESC
+                        LIMIT 1
+                    )
+                ORDER BY u.id
+                """;
+
+        List<UrlsWithCheckProjection> result = new ArrayList<>();
+        try (Connection conn = DataSourceProvider.getDataSource().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                result.add(new UrlsWithCheckProjection(
+                        rs.getLong("url_id"),
+                        rs.getString("url_name"),
+                        rs.getTimestamp("check_created_at") != null
+                                ? rs.getTimestamp("check_created_at").toLocalDateTime()
+                                : null,
+                        rs.getInt("check_status_code")
+                ));
+            }
+        }
+        return result;
     }
 }

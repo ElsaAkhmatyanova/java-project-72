@@ -1,10 +1,11 @@
 package hexlet.code.mapper;
 
-import hexlet.code.dto.UrlsWithCheckDto;
 import hexlet.code.dto.UrlCheckInfoDto;
 import hexlet.code.dto.UrlInfoDto;
+import hexlet.code.dto.UrlsWithCheckDto;
 import hexlet.code.model.UrlChecks;
 import hexlet.code.model.Urls;
+import hexlet.code.repository.projection.UrlsWithCheckProjection;
 
 import java.time.format.DateTimeFormatter;
 
@@ -20,14 +21,14 @@ public class UrlsMapper {
         );
     }
 
-    public static UrlsWithCheckDto mapToDto(Urls urls, UrlChecks urlChecks) {
+    public static UrlsWithCheckDto mapToDto(UrlsWithCheckProjection urlWithCheck) {
         return new UrlsWithCheckDto(
-                urls.getId(),
-                urls.getName(),
-                urlChecks != null && urlChecks.getCreatedAt() != null
-                        ? DATE_TIME_FORMATTER.format(urlChecks.getCreatedAt())
+                urlWithCheck.id(),
+                urlWithCheck.name(),
+                urlWithCheck.lastCheck() != null
+                        ? DATE_TIME_FORMATTER.format(urlWithCheck.lastCheck())
                         : null,
-                urlChecks != null ? urlChecks.getStatusCode() : null
+                urlWithCheck.checkCode()
         );
     }
 

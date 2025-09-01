@@ -48,7 +48,7 @@ class UrlUtilTest {
         String input = "http://example.com:80/index.html";
         String result = UrlUtil.parseUrlToDbFormat(input);
         assertEquals("http://example.com:80", result,
-                "Even default port should be included because code adds it if specified");
+                "Even default port should be included because checkCode adds it if specified");
     }
 
     @Test

@@ -76,39 +76,4 @@ public class UrlChecksRepository {
         }
         return urlChecks;
     }
-
-    public static List<UrlChecks> findAllLatest() throws SQLException {
-        String sql = "SELECT "
-                + "uc.id, uc.url_id, uc.status_code, uc.title, uc.h1, uc.description, uc.created_at "
-                + "FROM url_checks uc "
-                + "WHERE uc.created_at = ( "
-                + "    SELECT MAX(uc2.created_at) "
-                + "    FROM url_checks uc2 "
-                + "    WHERE uc2.url_id = uc.url_id "
-                + ") "
-                + "AND uc.id = ( "
-                + "    SELECT MAX(uc3.id) "
-                + "    FROM url_checks uc3 "
-                + "    WHERE uc3.url_id = uc.url_id "
-                + "      AND uc3.created_at = uc.created_at "
-                + ");";
-
-        List<UrlChecks> urls = new ArrayList<>();
-        try (Connection conn = DataSourceProvider.getDataSource().getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                urls.add(new UrlChecks(
-                        rs.getLong("id"),
-                        rs.getLong("url_id"),
-                        rs.getInt("status_code"),
-                        rs.getString("title"),
-                        rs.getString("h1"),
-                        rs.getString("description"),
-                        rs.getTimestamp("created_at").toLocalDateTime()
-                ));
-            }
-        }
-        return urls;
-    }
 }

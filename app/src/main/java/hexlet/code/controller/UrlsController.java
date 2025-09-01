@@ -2,9 +2,9 @@ package hexlet.code.controller;
 
 import hexlet.code.dto.AlertType;
 import hexlet.code.dto.FlashMessage;
-import hexlet.code.dto.UrlsWithCheckDto;
 import hexlet.code.dto.UrlListPage;
 import hexlet.code.dto.UrlPage;
+import hexlet.code.dto.UrlsWithCheckDto;
 import hexlet.code.exception.EntityAlreadyExistException;
 import hexlet.code.exception.UrlParsingException;
 import hexlet.code.mapper.UrlsMapper;
@@ -12,6 +12,7 @@ import hexlet.code.model.UrlChecks;
 import hexlet.code.model.Urls;
 import hexlet.code.repository.UrlChecksRepository;
 import hexlet.code.repository.UrlsRepository;
+import hexlet.code.repository.projection.UrlsWithCheckProjection;
 import hexlet.code.util.UrlUtil;
 import io.javalin.http.Context;
 import io.javalin.http.InternalServerErrorResponse;
@@ -20,8 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
@@ -31,18 +30,9 @@ public class UrlsController {
     public static void index(Context ctx) {
         List<UrlsWithCheckDto> urlsWithCheckDtoList = Collections.emptyList();
         try {
-
-            List<Urls> urlList = UrlsRepository.findAll();
-            List<UrlChecks> urlChecksList = UrlChecksRepository.findAllLatest();
-
-            Map<Long, UrlChecks> checksByUrlId = urlChecksList.stream()
-                    .collect(Collectors.toMap(UrlChecks::getUrlId, uc -> uc));
-
+            List<UrlsWithCheckProjection> urlList = UrlsRepository.findAllWithLatestCheck();
             urlsWithCheckDtoList = urlList.stream()
-                    .map(urls -> {
-                        UrlChecks targetCheck = checksByUrlId.get(urls.getId());
-                        return UrlsMapper.mapToDto(urls, targetCheck);
-                    })
+                    .map(UrlsMapper::mapToDto)
                     .toList();
         } catch (Exception e) {
             log.error("Exception while retrieving urls data!", e);
