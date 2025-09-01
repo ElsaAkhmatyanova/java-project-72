@@ -231,9 +231,11 @@ class AppTest {
         @SneakyThrows
         @DisplayName("Should return error flash when url not found")
         public void testCreateUrlCheckNotFound() {
+            Long idToCheck = 1L;
+            assertThat(UrlChecksRepository.findAll()).isEmpty();
             JavalinTest.test(app, (server, client) -> {
-                var response = client.post("/urls/1/checks");
-                var savedChecks = UrlChecksRepository.findAllByUrlId(1L);
+                var response = client.post("/urls/" + idToCheck + "/checks");
+                var savedChecks = UrlChecksRepository.findAllByUrlId(idToCheck);
                 assertThat(savedChecks).isEmpty();
             });
         }

@@ -53,6 +53,28 @@ public class UrlChecksRepository {
         return urlChecks;
     }
 
+    public static List<UrlChecks> findAll() throws SQLException {
+        String sql = "SELECT id, url_id, status_code, title, h1, description, created_at FROM url_checks";
+
+        List<UrlChecks> urlChecks = new ArrayList<>();
+        try (Connection conn = DataSourceProvider.getDataSource().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                urlChecks.add(new UrlChecks(
+                        rs.getLong("id"),
+                        rs.getLong("url_id"),
+                        rs.getInt("status_code"),
+                        rs.getString("title"),
+                        rs.getString("h1"),
+                        rs.getString("description"),
+                        rs.getTimestamp("created_at").toLocalDateTime()
+                ));
+            }
+        }
+        return urlChecks;
+    }
+
     public static List<UrlChecks> findAllByUrlId(Long id) throws SQLException, NullPointerException {
         if (id == null) {
             throw new NullPointerException("Id must be not null!");
