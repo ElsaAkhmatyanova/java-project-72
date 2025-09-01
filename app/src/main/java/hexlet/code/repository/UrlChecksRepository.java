@@ -14,6 +14,10 @@ import java.util.List;
 public class UrlChecksRepository {
 
     public static UrlChecks save(UrlChecks urlChecks) throws SQLException {
+        if (urlChecks == null) {
+            throw new NullPointerException("Object to save must be not null");
+        }
+
         String sql = "INSERT INTO url_checks "
                 + "(url_id, status_code, title, h1, description) "
                 + "VALUES (?, ?, ?, ?, ?)";
@@ -27,9 +31,11 @@ public class UrlChecksRepository {
             ps.setString(5, urlChecks.getDescription());
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    urlChecks.setId(rs.getLong(1));
+                if (!rs.next()) {
+                    throw new SQLException("Failed to retrieve generated ID for check with url_id="
+                            + urlChecks.getUrlId());
                 }
+                urlChecks.setId(rs.getLong(1));
             }
         }
 
@@ -38,9 +44,10 @@ public class UrlChecksRepository {
              PreparedStatement ps = conn.prepareStatement("SELECT created_at FROM url_checks WHERE id = ?")) {
             ps.setLong(1, urlChecks.getId());
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    urlChecks.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                if (!rs.next()) {
+                    throw new SQLException("Failed to retrieve created_at for URL with id=" + urlChecks.getId());
                 }
+                urlChecks.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
             }
         }
         return urlChecks;

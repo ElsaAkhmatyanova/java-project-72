@@ -18,6 +18,10 @@ import java.util.Optional;
 public class UrlsRepository {
 
     public static Urls save(Urls urls) throws SQLException {
+        if (urls == null) {
+            throw new NullPointerException("Object to save must be not null");
+        }
+
         String sql = "INSERT INTO urls (name) VALUES (?)";
 
         try (Connection conn = DataSourceProvider.getDataSource().getConnection();
@@ -25,9 +29,10 @@ public class UrlsRepository {
             ps.setString(1, urls.getName());
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    urls.setId(rs.getLong(1));
+                if (!rs.next()) {
+                    throw new SQLException("Failed to retrieve generated ID for URL=" + urls.getName());
                 }
+                urls.setId(rs.getLong(1));
             }
         }
 
@@ -36,9 +41,10 @@ public class UrlsRepository {
              PreparedStatement ps = conn.prepareStatement("SELECT created_at FROM urls WHERE id = ?")) {
             ps.setLong(1, urls.getId());
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    urls.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                if (!rs.next()) {
+                    throw new SQLException("Failed to retrieve created_at for URL with id=" + urls.getId());
                 }
+                urls.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
             }
         }
         return urls;
