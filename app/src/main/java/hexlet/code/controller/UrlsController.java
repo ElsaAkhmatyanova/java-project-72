@@ -5,8 +5,7 @@ import hexlet.code.dto.FlashMessage;
 import hexlet.code.dto.UrlListPage;
 import hexlet.code.dto.UrlPage;
 import hexlet.code.dto.UrlsWithCheckDto;
-import hexlet.code.exception.EntityAlreadyExistException;
-import hexlet.code.exception.UrlParsingException;
+import hexlet.code.exception.NotFoundException;
 import hexlet.code.mapper.UrlsMapper;
 import hexlet.code.model.UrlChecks;
 import hexlet.code.model.Urls;
@@ -15,11 +14,8 @@ import hexlet.code.repository.UrlsRepository;
 import hexlet.code.repository.projection.UrlsWithCheckProjection;
 import hexlet.code.util.UrlUtil;
 import io.javalin.http.Context;
-import io.javalin.http.InternalServerErrorResponse;
-import io.javalin.http.NotFoundResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
 import java.util.List;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
@@ -27,72 +23,57 @@ import static io.javalin.rendering.template.TemplateUtil.model;
 @Slf4j
 public class UrlsController {
 
-    public static void index(Context ctx) {
-        List<UrlsWithCheckDto> urlsWithCheckDtoList = Collections.emptyList();
-        try {
-            List<UrlsWithCheckProjection> urlList = UrlsRepository.findAllWithLatestCheck();
-            urlsWithCheckDtoList = urlList.stream()
-                    .map(UrlsMapper::mapToDto)
-                    .toList();
-        } catch (Exception e) {
-            log.error("Exception while retrieving urls data!", e);
-        }
-        UrlListPage page = new UrlListPage(urlsWithCheckDtoList);
+    public static void index(Context ctx) throws Exception {
+        List<UrlsWithCheckProjection> urlList = UrlsRepository.findAllWithLatestCheck();
+        List<UrlsWithCheckDto> urlsWithCheckDtoList = urlList.stream()
+                .map(UrlsMapper::mapToDto)
+                .toList();
+        FlashMessage flash = ctx.consumeSessionAttribute("flash");
+        UrlListPage page = new UrlListPage(flash, urlsWithCheckDtoList);
         ctx.render("page/url_list.jte", model("page", page));
     }
 
-    public static void create(Context ctx) {
+    public static void create(Context ctx) throws Exception {
+        String inputUrl = ctx.formParam("url");
+        log.info("Get url value from form: {}", inputUrl);
+        String formattedUrl;
         try {
-            String inputUrl = ctx.formParam("url");
-            log.info("Get url value from form: {}", inputUrl);
-            String formattedUrl = UrlUtil.parseUrlToDbFormat(inputUrl);
+            formattedUrl = UrlUtil.parseUrlToDbFormat(inputUrl);
             log.info("Formatted url: {}", formattedUrl);
-
-            boolean isExisted = UrlsRepository.isExistByName(formattedUrl);
-            if (isExisted) {
-                throw new EntityAlreadyExistException("Entity urls already exist with same name!");
-            }
-
-            UrlsRepository.save(new Urls(formattedUrl));
-            FlashMessage flashMessage = new FlashMessage(AlertType.SUCCESS, "Страница успешно добавлена");
-            ctx.sessionAttribute("flash", flashMessage);
-        } catch (UrlParsingException e) {
+        } catch (Exception e) {
             log.error("Exception while format URL", e);
             FlashMessage flashMessage = new FlashMessage(AlertType.DANGER, "Некорректный URL!");
             ctx.sessionAttribute("flash", flashMessage);
-        } catch (EntityAlreadyExistException e) {
-            log.error("Entity urls already exist with this name!", e);
+            ctx.redirect("/");
+            return;
+        }
+
+        boolean isExisted = UrlsRepository.isExistByName(formattedUrl);
+        if (isExisted) {
+            log.error("Entity urls already exist with this name!");
             FlashMessage flashMessage = new FlashMessage(AlertType.WARNING, "Страница уже существует");
             ctx.sessionAttribute("flash", flashMessage);
-        } catch (Exception e) {
-            log.error("Exception while create new url entity!", e);
-            FlashMessage flashMessage = new FlashMessage(AlertType.DANGER, "Ошибка сервера!");
-            ctx.sessionAttribute("flash", flashMessage);
-        } finally {
             ctx.redirect("/");
+        } else {
+            UrlsRepository.save(new Urls(formattedUrl));
+            FlashMessage flashMessage = new FlashMessage(AlertType.SUCCESS, "Страница успешно добавлена");
+            ctx.sessionAttribute("flash", flashMessage);
+            ctx.redirect("/urls");
         }
     }
 
-    public static void findById(Context ctx) {
-        try {
-            Long urlsId = ctx.pathParamAsClass("id", Long.class).get();
-            log.info("Get urls by id: {}", urlsId);
-            Urls urls = UrlsRepository.findById(urlsId)
-                    .orElseThrow(() -> new NotFoundResponse("Urls entity with id=" + urlsId + " not found!"));
-            List<UrlChecks> urlChecks = UrlChecksRepository.findAllByUrlId(urlsId);
-            FlashMessage flash = ctx.consumeSessionAttribute("flash");
-            UrlPage page = new UrlPage(
-                    flash,
-                    UrlsMapper.mapToDto(urls),
-                    urlChecks.stream().map(UrlsMapper::mapToDto).toList()
-            );
-            ctx.render("page/url.jte", model("page", page));
-        } catch (NotFoundResponse e) {
-            log.error("NotFoundResponse exception!", e);
-            throw e;
-        } catch (Exception e) {
-            log.error("Exception while retrieving urls entity by id", e);
-            throw new InternalServerErrorResponse("Ошибка сервера!");
-        }
+    public static void findById(Context ctx) throws Exception {
+        Long urlsId = ctx.pathParamAsClass("id", Long.class).get();
+        log.info("Get urls by id: {}", urlsId);
+        Urls urls = UrlsRepository.findById(urlsId)
+                .orElseThrow(() -> new NotFoundException("Urls entity with id=" + urlsId + " not found!"));
+        List<UrlChecks> urlChecks = UrlChecksRepository.findAllByUrlId(urlsId);
+        FlashMessage flash = ctx.consumeSessionAttribute("flash");
+        UrlPage page = new UrlPage(
+                flash,
+                UrlsMapper.mapToDto(urls),
+                urlChecks.stream().map(UrlsMapper::mapToDto).toList()
+        );
+        ctx.render("page/url.jte", model("page", page));
     }
 }
