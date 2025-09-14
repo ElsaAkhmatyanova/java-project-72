@@ -2,8 +2,8 @@ package hexlet.code.controller;
 
 import hexlet.code.dto.AlertType;
 import hexlet.code.dto.FlashMessage;
-import hexlet.code.dto.UrlListPage;
-import hexlet.code.dto.UrlPage;
+import hexlet.code.dto.page.UrlListPage;
+import hexlet.code.dto.page.UrlPage;
 import hexlet.code.dto.UrlsWithCheckDto;
 import hexlet.code.exception.NotFoundException;
 import hexlet.code.mapper.UrlsMapper;

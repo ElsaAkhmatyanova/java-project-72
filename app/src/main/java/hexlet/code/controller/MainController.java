@@ -1,7 +1,7 @@
 package hexlet.code.controller;
 
 import hexlet.code.dto.FlashMessage;
-import hexlet.code.dto.MainPage;
+import hexlet.code.dto.page.MainPage;
 import io.javalin.http.Context;
 
 import static io.javalin.rendering.template.TemplateUtil.model;

@@ -1,6 +1,6 @@
 @import gg.jte.Content
 @import hexlet.code.util.NamedRoutes
-@import hexlet.code.dto.BasePage
+@import hexlet.code.dto.page.BasePage
 
 @param Content content
 @param String title
