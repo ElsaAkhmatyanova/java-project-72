@@ -1,6 +1,5 @@
 package hexlet.code.util;
 
-import hexlet.code.exception.UnirestFetchException;
 import hexlet.code.model.UrlChecks;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -12,7 +11,7 @@ import org.jsoup.nodes.Element;
 @Slf4j
 public class UnirestUtil {
 
-    public static UrlChecks fetchPageInfoIntoUrlChecks(String url) throws UnirestFetchException {
+    public static UrlChecks fetchPageInfoIntoUrlChecks(String url) {
         HttpResponse<String> response = Unirest.get(url).asString();
         log.info("Fetch info from url: {}, response: {}", url, response);
         int statusCode = response.getStatus();
