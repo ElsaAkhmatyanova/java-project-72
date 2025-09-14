@@ -1,4 +1,4 @@
-package hexlet.code.util;
+package hexlet.code.service;
 
 import hexlet.code.model.UrlChecks;
 import kong.unirest.HttpResponse;
@@ -8,8 +8,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.net.URI;
+import java.net.URL;
+
 @Slf4j
-public class UnirestUtil {
+public class UrlService {
 
     public static UrlChecks fetchPageInfoIntoUrlChecks(String url) {
         HttpResponse<String> response = Unirest.get(url).asString();
@@ -32,5 +35,18 @@ public class UnirestUtil {
                 .h1(h1Text)
                 .description(description)
                 .build();
+    }
+
+    public static String parseUrlToDbFormat(String inputUrl) throws Exception {
+        URI uri = new URI(inputUrl);
+        URL url = uri.toURL();
+        StringBuilder baseUrl = new StringBuilder();
+        baseUrl.append(url.getProtocol())
+                .append("://")
+                .append(url.getHost());
+        if (url.getPort() != -1) {
+            baseUrl.append(":").append(url.getPort());
+        }
+        return baseUrl.toString();
     }
 }

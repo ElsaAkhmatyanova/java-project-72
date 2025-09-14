@@ -12,7 +12,7 @@ import hexlet.code.model.Urls;
 import hexlet.code.repository.UrlChecksRepository;
 import hexlet.code.repository.UrlsRepository;
 import hexlet.code.repository.projection.UrlsWithCheckProjection;
-import hexlet.code.util.UrlUtil;
+import hexlet.code.service.UrlService;
 import io.javalin.http.Context;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,7 +38,7 @@ public class UrlsController {
         log.info("Get url value from form: {}", inputUrl);
         String formattedUrl;
         try {
-            formattedUrl = UrlUtil.parseUrlToDbFormat(inputUrl);
+            formattedUrl = UrlService.parseUrlToDbFormat(inputUrl);
             log.info("Formatted url: {}", formattedUrl);
         } catch (Exception e) {
             log.error("Exception while format URL", e);

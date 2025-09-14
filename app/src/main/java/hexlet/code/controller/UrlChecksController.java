@@ -7,8 +7,8 @@ import hexlet.code.model.UrlChecks;
 import hexlet.code.model.Urls;
 import hexlet.code.repository.UrlChecksRepository;
 import hexlet.code.repository.UrlsRepository;
+import hexlet.code.service.UrlService;
 import hexlet.code.util.NamedRoutes;
-import hexlet.code.util.UnirestUtil;
 import io.javalin.http.Context;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +22,7 @@ public class UrlChecksController {
                 .orElseThrow(() -> new NotFoundException("Urls entity with id=" + urlsId + " not found!"));
         UrlChecks urlChecks;
         try {
-            urlChecks = UnirestUtil.fetchPageInfoIntoUrlChecks(urls.getName());
+            urlChecks = UrlService.fetchPageInfoIntoUrlChecks(urls.getName());
         } catch (Exception e) {
             log.error("Exception while calling url: {}", urls.getName(), e);
             FlashMessage flashMessage = new FlashMessage(AlertType.DANGER, "Ошибка получения данных по URL!");
