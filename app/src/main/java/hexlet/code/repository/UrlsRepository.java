@@ -22,7 +22,7 @@ public class UrlsRepository {
             throw new NullPointerException("Object to save must be not null");
         }
 
-        String sql = "INSERT INTO urls (name) VALUES (?)";
+        String sql = "INSERT INTO urls (name, created_at) VALUES (?, now())";
 
         try (Connection conn = DataSourceProvider.getDataSource().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

@@ -19,8 +19,8 @@ public class UrlChecksRepository {
         }
 
         String sql = "INSERT INTO url_checks "
-                + "(url_id, status_code, title, h1, description) "
-                + "VALUES (?, ?, ?, ?, ?)";
+                + "(url_id, status_code, title, h1, description, created_at) "
+                + "VALUES (?, ?, ?, ?, ?, now())";
 
         try (Connection conn = DataSourceProvider.getDataSource().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
